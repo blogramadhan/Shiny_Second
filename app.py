@@ -42,16 +42,22 @@ def filter_by_date(df: pd.DataFrame,date_range: tuple):
 
 ui.page_opts(title= "US Housing App")
 
-
-
-
-
 with ui.sidebar():
-    ui.input_select("state","Filter by State", choices=STATE_CHOICES),
-    ui.input_slider("date_range","Filter by Date Range",
-                min = string_to_date("2018-3-31"),
-                max = string_to_date("2024-4-30"),
-                value = [string_to_date(x) for x in ["2018-3-31","2024-4-30"]])
+    # ui.input_select("state","Filter by State", choices=STATE_CHOICES),
+    # ui.input_slider("date_range","Filter by Date Range",
+    #             min = string_to_date("2018-3-31"),
+    #             max = string_to_date("2024-4-30"),
+    #             value = [string_to_date(x) for x in ["2018-3-31","2024-4-30"]])
+    ui.action_button("apply_filters", "Apply Filters")
+            @reactive.Effect
+            @reactive.event(input.apply_filters)
+            def update_dashboard():
+                list_price_plot()
+                list_price_data()
+                for_sale_plot()
+                for_sale_data()
+                listings_plot()
+                listings_data()
     
 with ui.layout_column_wrap():
     with ui.value_box(showcase = icon_svg("dollar-sign")):
@@ -214,3 +220,21 @@ with ui.navset_card_underline(title = "New Listings"):
             else:
                 df = new_listings_df[new_listings_df["StateName"] == input.state()]
             return render.DataGrid(df)
+        
+
+        with ui.sidebar():
+            ui.input_select("state", "Filter by State", choices=STATE_CHOICES)
+            ui.input_slider("date_range", "Filter by Date Range",
+                            min=string_to_date("2018-3-31"),
+                            max=string_to_date("2024-4-30"),
+                            value=[string_to_date(x) for x in ["2018-3-31", "2024-4-30"]])
+            ui.action_button("apply_filters", "Apply Filters")
+            @reactive.Effect
+            @reactive.event(input.apply_filters)
+            def update_dashboard():
+                list_price_plot()
+                list_price_data()
+                for_sale_plot()
+                for_sale_data()
+                listings_plot()
+                listings_data()
